@@ -40,17 +40,17 @@ const PitchSelector = (props: PitchSelectorProps) => {
   }
   return <>
     <div className="pitch-selector">
-    <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0}>0</button>
-    {generateNumbers(1, 12).map((value) => (
-      <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value}>
-        +{value}
-      </button>
-    ))}
-    {generateNumbers(1, 12).map((value) => (
-      <button key={`-${value}`} onClick={() => props.onChange(-value)} disabled={props.value === -value}>
-        -{value}
-      </button>
-    ))}
+      <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0}>0</button>
+      {generateNumbers(1, 12).map((value) => (
+        <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value}>
+          +{value}
+        </button>
+      ))}
+      {generateNumbers(1, 12).map((value) => (
+        <button key={`-${value}`} onClick={() => props.onChange(-value)} disabled={props.value === -value}>
+          -{value}
+        </button>
+      ))}
     </div>
   </>
 }
