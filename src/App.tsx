@@ -1,33 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
+import soundtouchWorklet from '@soundtouchjs/audio-worklet?url'
+
+type PitchChanger = {
+  setPitch: (pitch: number) => void
+}
+
+const CreatePitchChanger =  async (): Promise<PitchChanger> => {
+  const stream = await navigator.mediaDevices.getDisplayMedia({
+    audio: {
+      // prevent original audio playback
+      suppressLocalAudioPlayback: true,
+    } as MediaTrackConstraints,
+    video: true,
+  })
+
+  const ctx = new AudioContext()
+  await ctx.audioWorklet.addModule(soundtouchWorklet)
+  const source = ctx.createMediaStreamSource(stream)
+  const soundtouchNode = new AudioWorkletNode(ctx, 'soundtouch-processor')
+  source.connect(soundtouchNode).connect(ctx.destination)
+
+  return {
+    setPitch: (pitch: number) => {
+      soundtouchNode.parameters.get('pitchSemitones')?.setValueAtTime(pitch, ctx.currentTime)
+    }
+  }
+}
+
+type PitchSelectorProps = {
+  value: number
+  onChange: (value: number) => void
+}
+
+const PitchSelector = (props: PitchSelectorProps) => {
+  const generateNumbers = (start: number, end: number) => {
+    return Array(end-start+1).fill(0).map((_, i) => start + i)
+  }
+  return <>
+    <div className="pitch-selector">
+    <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0}>0</button>
+    {generateNumbers(1, 12).map((value) => (
+      <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value}>
+        +{value}
+      </button>
+    ))}
+    {generateNumbers(1, 12).map((value) => (
+      <button key={`-${value}`} onClick={() => props.onChange(-value)} disabled={props.value === -value}>
+        -{value}
+      </button>
+    ))}
+    </div>
+  </>
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const pitchChanger = useRef<PitchChanger | null>(null)
+
+  const selectTab = async () => {
+    pitchChanger.current = await CreatePitchChanger()
+    pitchChanger.current?.setPitch(pitch)
+  }
+
+  const [pitch, setPitch] = useState(0)
+
+  useEffect(() => {
+    pitchChanger.current?.setPitch(pitch)
+  }, [pitch])
+
+  const [arrowKeyEnabled, setArrowKeyEnabled] = useState(false)
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!arrowKeyEnabled) return
+
+      if (e.key === 'ArrowUp') {
+        setPitch(p => Math.min(p + 1, 12))
+      }
+      if (e.key === 'ArrowDown') {
+        setPitch(p => Math.max(p - 1, -12))
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [arrowKeyEnabled])
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button onClick={selectTab}>タブを選択</button><br />
+      <hr/>
+      <PitchSelector value={pitch} onChange={setPitch} /><br />
+      <label>
+        <input type="checkbox" checked={arrowKeyEnabled} onChange={(e) => setArrowKeyEnabled(e.target.checked)} />
+        矢印キー(↑↓)でピッチ変更
+      </label>
     </>
   )
 }
