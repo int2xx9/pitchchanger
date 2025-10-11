@@ -69,7 +69,7 @@ function App() {
     pitchChanger.current?.setPitch(pitch)
   }, [pitch])
 
-  const [arrowKeyEnabled, setArrowKeyEnabled] = useState(false)
+  const [arrowKeyEnabled, setArrowKeyEnabled] = useState(true)
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
