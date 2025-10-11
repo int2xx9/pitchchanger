@@ -40,17 +40,19 @@ const PitchSelector = (props: PitchSelectorProps) => {
   }
   return <>
     <div className="pitch-selector">
-      <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0}>0</button>
+      <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0} className={props.value === 0 ? 'active' : ''}>0</button>
       {generateNumbers(1, 12).map((value) => (
-        <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value}>
+        <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value} className={props.value === value ? 'active' : ''}>
           +{value}
         </button>
       ))}
       {generateNumbers(1, 12).map((value) => (
-        <button key={`-${value}`} onClick={() => props.onChange(-value)} disabled={props.value === -value}>
+        <button key={`-${value}`} onClick={() => props.onChange(-value)} disabled={props.value === -value} className={props.value === -value ? 'active' : ''}>
           -{value}
         </button>
       ))}
+      <button onClick={() => props.onChange(props.value - 12)} style={{ gridColumn: 'span 6' }} disabled={props.value < 0}>-12</button>
+      <button onClick={() => props.onChange(props.value + 12)} style={{ gridColumn: 'span 6' }} disabled={props.value > 0}>+12</button>
     </div>
   </>
 }
