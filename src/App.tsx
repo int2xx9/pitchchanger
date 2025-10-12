@@ -97,6 +97,9 @@ function App() {
         <input type="checkbox" checked={arrowKeyEnabled} onChange={(e) => setArrowKeyEnabled(e.target.checked)} />
         矢印キー(↑↓)でピッチ変更
       </label>
+      <div style={{ marginTop: '1em', fontSize: '0.9em', color: '#888' }}>
+        <a href="https://github.com/int2xx9/pitchchanger/wiki/Usage">使用方法</a>&nbsp;|&nbsp;<a href="https://github.com/int2xx9/pitchchanger">ソースコード</a>
+      </div>
     </>
   )
 }
