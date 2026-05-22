@@ -12,6 +12,10 @@ const CreatePitchChanger =  async (): Promise<PitchChanger> => {
     audio: {
       // prevent original audio playback
       suppressLocalAudioPlayback: true,
+      // these constraints may affect the audio quality so disable them
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false,
     } as MediaTrackConstraints,
     video: true,
   })
