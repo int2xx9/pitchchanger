@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
-import soundtouchWorklet from '@soundtouchjs/audio-worklet?url'
+import { createSignalsmithStretchPitchChanger } from './nodes'
 
 type PitchChanger = {
   setPitch: (pitch: number) => void
@@ -21,14 +21,14 @@ const CreatePitchChanger =  async (): Promise<PitchChanger> => {
   })
 
   const ctx = new AudioContext()
-  await ctx.audioWorklet.addModule(soundtouchWorklet)
+  const node = await createSignalsmithStretchPitchChanger(ctx)
+
   const source = ctx.createMediaStreamSource(stream)
-  const soundtouchNode = new AudioWorkletNode(ctx, 'soundtouch-processor')
-  source.connect(soundtouchNode).connect(ctx.destination)
+  source.connect(node.node).connect(ctx.destination)
 
   return {
     setPitch: (pitch: number) => {
-      soundtouchNode.parameters.get('pitchSemitones')?.setValueAtTime(pitch, ctx.currentTime)
+      node.effect.setPitch(pitch)
     }
   }
 }
