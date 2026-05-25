@@ -1,4 +1,4 @@
-FROM node:22.20 AS build
+FROM node:24.16 AS build
 WORKDIR /app
 
 COPY package*.json .
@@ -7,7 +7,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:1.29
+FROM nginx:1.31
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY <<-EOF /etc/nginx/conf.d/default.conf
 server {
