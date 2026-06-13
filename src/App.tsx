@@ -7,8 +7,8 @@ import { SpotlightProvider, SpotlightTour, useSpotlight } from 'react-tourlight'
 import 'react-tourlight/styles.css'
 
 const OnboardingStatus = {
-  isCompleted: localStorage.getItem('onboardingCompleted') === 'true',
-  setStatus: (completed: boolean) => localStorage.setItem('onboardingCompleted', completed ? 'true' : 'false'),
+  isCompleted: localStorage.getItem('onboardingCompleted') !== null,
+  markCompleted: () => localStorage.setItem('onboardingCompleted', new Date().getTime().toString()),
 }
 
 type PitchChanger = {
@@ -139,8 +139,8 @@ function SpotlightedApp() {
   return <SpotlightProvider>
     <SpotlightTour
       id="onboarding"
-      onComplete={() => OnboardingStatus.setStatus(true)}
-      onSkip={() => OnboardingStatus.setStatus(true)}
+      onComplete={() => OnboardingStatus.markCompleted()}
+      onSkip={() => OnboardingStatus.markCompleted()}
       steps={[
         {
           target: '[data-tour="onboarding-step-1"]',
