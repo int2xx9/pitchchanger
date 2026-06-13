@@ -4,3 +4,19 @@
   padding: 2rem;
   text-align: center;
 }
+
+.open-onboarding-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #ccc;
+  color: #999;
+  background: #fff;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-weight: bold;
+}

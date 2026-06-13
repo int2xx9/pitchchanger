@@ -110,6 +110,17 @@ const App = () => {
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.5rem' }}>
+        <button
+          className="open-onboarding-button"
+          type="button"
+          onClick={() => spotlight.start('onboarding')}
+          aria-label="使い方を表示"
+          title="使い方を表示">
+          ?
+        </button>
+      </div>
+
       <button data-tour="onboarding-step-1" onClick={selectTab}>タブを選択</button><br />
       <hr/>
       <PitchSelector value={pitch} onChange={setPitch} /><br />
