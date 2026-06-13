@@ -1,6 +1,7 @@
 FROM node:24.16 AS build
 WORKDIR /app
 
+COPY patches patches
 COPY package*.json .
 RUN npm ci
 
