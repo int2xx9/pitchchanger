@@ -2,6 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 import { createSignalsmithStretchPitchChanger } from './nodes'
+import { SpotlightProvider, SpotlightTour, useSpotlight } from 'react-tourlight'
+
+import 'react-tourlight/styles.css'
+
+const OnboardingStatus = {
+  isCompleted: localStorage.getItem('onboardingCompleted') === 'true',
+  setStatus: (completed: boolean) => localStorage.setItem('onboardingCompleted', completed ? 'true' : 'false'),
+}
 
 type PitchChanger = {
   setPitch: (pitch: number) => void
@@ -43,7 +51,7 @@ const PitchSelector = (props: PitchSelectorProps) => {
     return Array(end-start+1).fill(0).map((_, i) => start + i)
   }
   return <>
-    <div className="pitch-selector">
+    <div className="pitch-selector" data-tour="onboarding-step-2">
       <button onClick={() => props.onChange(0)} style={{ gridColumn: 'span 12' }} disabled={props.value === 0} className={props.value === 0 ? 'active' : ''}>0</button>
       {generateNumbers(1, 12).map((value) => (
         <button key={value} onClick={() => props.onChange(value)} disabled={props.value === value} className={props.value === value ? 'active' : ''}>
@@ -61,7 +69,9 @@ const PitchSelector = (props: PitchSelectorProps) => {
   </>
 }
 
-function App() {
+const App = () => {
+  const spotlight = useSpotlight()
+
   const pitchChanger = useRef<PitchChanger | null>(null)
 
   const selectTab = async () => {
@@ -92,9 +102,15 @@ function App() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [arrowKeyEnabled])
 
+  useEffect(() => {
+    if (!OnboardingStatus.isCompleted) {
+      spotlight.start('onboarding')
+    }
+  }, [])
+
   return (
     <>
-      <button onClick={selectTab}>タブを選択</button><br />
+      <button data-tour="onboarding-step-1" onClick={selectTab}>タブを選択</button><br />
       <hr/>
       <PitchSelector value={pitch} onChange={setPitch} /><br />
       <label>
@@ -108,4 +124,29 @@ function App() {
   )
 }
 
-export default App
+function SpotlightedApp() {
+  return <SpotlightProvider>
+    <SpotlightTour
+      id="onboarding"
+      onComplete={() => OnboardingStatus.setStatus(true)}
+      onSkip={() => OnboardingStatus.setStatus(true)}
+      steps={[
+        {
+          target: '[data-tour="onboarding-step-1"]',
+          title: '1. タブを選択する',
+          content: '音程を変更したい動画を別のタブで開いた後、このボタンをクリックして動画を再生しているタブを選択してください。',
+          placement: 'auto',
+        },
+        {
+          target: '[data-tour="onboarding-step-2"]',
+          title: '2. 音程を変更する',
+          content: '選択した数字に応じて音程が変化します。',
+          placement: 'auto',
+        }
+      ]}
+    />
+    <App />
+  </SpotlightProvider>
+}
+
+export default SpotlightedApp

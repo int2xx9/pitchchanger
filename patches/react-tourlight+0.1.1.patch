@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-tourlight/dist/index.mjs b/node_modules/react-tourlight/dist/index.mjs
+index aba0f0b..b7b5e22 100644
+--- a/node_modules/react-tourlight/dist/index.mjs
++++ b/node_modules/react-tourlight/dist/index.mjs
+@@ -302,7 +302,7 @@ function generateClipPath(rect, padding, radius) {
+ 	const w = rect.width + padding * 2;
+ 	const h = rect.height + padding * 2;
+ 	const r = Math.min(radius, w / 2, h / 2);
+-	return `path('${[
++	return `path(evenodd, '${[
+ 		`M 0 0`,
+ 		`H ${VIEWPORT_SIZE}`,
+ 		`V ${VIEWPORT_SIZE}`,
