@@ -20,3 +20,17 @@
   line-height: 1;
   font-weight: bold;
 }
+
+.environment-warning {
+  width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  text-align: left;
+}

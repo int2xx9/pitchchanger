@@ -11,6 +11,23 @@ const OnboardingStatus = {
   markCompleted: () => localStorage.setItem('onboardingCompleted', new Date().getTime().toString()),
 }
 
+const EnvironmentWarning = () => {
+  const isChromium = /Chrome/i.test(navigator.userAgent)
+  if (isChromium) {
+    return null
+  }
+
+  const isPC = /Windows|Macintosh|Linux/i.test(navigator.userAgent)
+  if (!isPC) {
+    return null
+  }
+
+  return <div className="environment-warning">
+    ⚠️あなたの環境ではこのアプリは正しく動作しない可能性があります。<br/>
+    推奨環境はmacOSまたはWindows上のGoogle Chromeです。
+    </div>
+}
+
 type PitchChanger = {
   setPitch: (pitch: number) => void
 }
@@ -122,6 +139,7 @@ const App = () => {
       </div>
 
       <button data-tour="onboarding-step-1" onClick={selectTab}>タブを選択</button><br />
+      <EnvironmentWarning />
       <hr/>
       <PitchSelector value={pitch} onChange={setPitch} /><br />
       <label>
